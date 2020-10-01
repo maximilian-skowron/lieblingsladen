@@ -14,7 +14,7 @@ The site [lieblingsladen.gera](https://lieblingsladen.gera.de/) is to be convert
 1. [Docker](https://docs.docker.com/install/)
 2. [Docker Compose](https://docs.docker.com/compose/install/)
 
-## Fast Ansible Server Setup (for Ubuntu)
+## Fast Ansible server setup (for Ubuntu)
 
 - Required: Ansible Knowledge
 - TODO: Change hosts in ansible/setup_server.yml
