@@ -11,7 +11,7 @@
     - docker
 
   tasks:
-    - name: Clone Salor git
+    - name: Clone lieblingsladen git
       git:
         repo: "https://github.com/maximilian-skowron/lieblingsladen.git"
         dest: "/home/ubuntu/lieblingsladen"
