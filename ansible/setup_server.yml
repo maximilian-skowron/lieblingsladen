@@ -1,0 +1,19 @@
+---
+- hosts: dhge
+
+  become: yes
+  become_method: sudo
+
+  vars:
+    docker_group_users: ubuntu
+
+  roles:
+    - docker
+
+  tasks:
+    - name: Clone Salor git
+      git:
+        repo: "https://github.com/maximilian-skowron/lieblingsladen.git"
+        dest: "/home/ubuntu/lieblingsladen"
+        recursive: yes
+        update: yes

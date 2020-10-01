@@ -1,0 +1,45 @@
+---
+# tasks file for docker on ubuntu
+
+- name: Uninstall old Docker packages
+  apt:
+    name:
+      - docker
+      - docker-engine
+      - docker.io
+    state: absent
+
+- name: Install HTTPS Repository Dependencys
+  apt:
+    update_cache: yes
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg-agent
+      - software-properties-common
+    state: "{{'latest' if update_docker else 'present'}}"
+
+- name: Add Docker repository Key
+  apt_key:
+    url: "{{ ubuntu_key_url }}"
+    id: "{{ apt_key_sig }}"
+    state: present
+
+- name: Add Docker repository
+  apt_repository:
+    repo: "{{ apt_repo }}"
+    state: present
+    update_cache: yes
+    validate_certs: yes
+
+- name: Install Docker packages
+  apt:
+    update_cache: yes
+    name:
+      - docker-ce 
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose
+    state: latest
+
+

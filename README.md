@@ -14,6 +14,12 @@ The site [lieblingsladen.gera](https://lieblingsladen.gera.de/) is to be convert
 1. [Docker](https://docs.docker.com/install/)
 2. [Docker Compose](https://docs.docker.com/compose/install/)
 
+## Fast Ansible Server Setup (for Ubuntu)
+
+- Required: Ansible Knowledge
+- TODO: Change hosts in ansible/setup_server.yml
+- Run: `ansible-playbook setup_server.yml`
+
 ## How to run it?
 
 See [Original Doku](https://github.com/mirumee/saleor-platform).
@@ -21,6 +27,7 @@ See [Original Doku](https://github.com/mirumee/saleor-platform).
 Difference:
 
 - Run docker-compose.customfrontend.yml instad of docker-compose.yml with docker compose.
+- folder name is lieblingsladen
 
 ## Where is the application running?
 

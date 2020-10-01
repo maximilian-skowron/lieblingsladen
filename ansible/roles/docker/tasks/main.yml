@@ -1,0 +1,9 @@
+---
+# tasks file for docker
+
+- name: Setup Docker on Ubuntu
+  include: docker_ubuntu_setup.yml
+
+- name: Add Docker Group
+  include: docker_group.yml
+  when: docker_group_users is defined

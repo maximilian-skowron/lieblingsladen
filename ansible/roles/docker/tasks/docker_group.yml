@@ -1,0 +1,18 @@
+---
+# tasks file for docker on ubuntu
+
+- name: Ensure Docker group exsists
+  group:
+    name: docker
+    state: present
+  when: docker_group_users is defined
+  become: true
+
+- name: Add Users to Docker group
+  user:
+    name: "{{ item }}"
+    append: yes
+    groups: docker
+  with_items: "{{ docker_group_users }}"
+  when: docker_group_users is defined
+  become: true
