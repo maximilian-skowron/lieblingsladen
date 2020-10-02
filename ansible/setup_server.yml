@@ -1,5 +1,5 @@
 ---
-- hosts: dhge
+- hosts:
 
   become: yes
   become_method: sudo
