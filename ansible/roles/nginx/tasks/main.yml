@@ -1,0 +1,33 @@
+---
+# tasks file for nginx
+
+- name: install nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: remove default config
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: nginx config
+  copy:
+    src: reverse_proxy.conf
+    dest: /etc/nginx/sites-available/reverse_proxy.conf
+    mode: "755"
+  notify:
+    - restart nginx
+
+- name: link nginx config
+  file:
+    src: /etc/nginx/sites-available/reverse_proxy.conf
+    dest: /etc/nginx/sites-enabled/reverse_proxy.conf
+    mode: "755"
+    state: link
+
+- name: nginx autostart and running
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
