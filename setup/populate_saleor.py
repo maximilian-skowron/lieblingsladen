@@ -30,7 +30,7 @@ def get_query_create_category(name: str, parrent_id: str = None):
     return query
 
 
-def get_querry_create_example_product(name: str, product_type_id: str, category_id: str):
+def get_query_create_example_product(name: str, product_type_id: str, category_id: str):
     lorem_ipsum = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
 
     query = """mutation exampleProduct {
@@ -99,7 +99,7 @@ def create_products(category_dict):
 
     for product in products:
         name, product_type_id, category_id = product
-        execute_querry(get_querry_create_example_product(
+        execute_querry(get_query_create_example_product(
             name, product_type_id, category_id))
 
 
