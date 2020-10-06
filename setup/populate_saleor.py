@@ -17,7 +17,7 @@ def get_query_create_category(name: str, parrent_id: str = None):
 
     parrent_part = ', parent: "{0}"'.format(parrent_id)
 
-    query = """ mutation testCreate {
+    query = """ mutation c_category {
             categoryCreate(input: { name: "%s"} %s) {
                 category {
                     name
