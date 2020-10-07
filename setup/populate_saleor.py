@@ -44,6 +44,37 @@ def get_query_create_example_product(name: str, product_type_id: str, category_i
     return query
 
 
+def get_query_create_product_type(name: str):
+    query = """mutation exampleProductType {
+            productTypeCreate (input: {name:"%s", }){
+                    productType{
+                        id
+                    }
+            }
+        }""" % (name)
+
+    return query
+
+
+def create_p_types():
+    types = [
+        ('DefaultProduct'),
+        ('Veranstaltung'),
+        ('Getränk'),
+        ('Frischwaare'),
+        ('Lieferservice'),
+    ]
+
+    id_dict = {}
+
+    for type_name in types:
+        r_json = execute_querry(get_query_create_product_type(type_name))
+        t_id = r_json['data']['productTypeCreate']['productType']['id']
+        id_dict[type_name] = t_id
+
+    return id_dict
+
+
 def create_categories():
     categories = [
         ('Verpfelgung', ['Säfte', 'Alkoholische Getränke',
@@ -75,26 +106,38 @@ def create_categories():
     return category_id_dict
 
 
-def create_products(category_dict):
+def create_products(category_dict: dict, p_type_dict: dict):
     products = [
-        ('Orangensaft', '', category_dict['Säfte']),
-        ('Apfelsaft', '', category_dict['Säfte']),
-        ('Wein', '', category_dict['Alkoholische Getränke']),
-        ('Bier', '', category_dict['Alkoholische Getränke']),
-        ('Banane', '', category_dict['Obst']),
-        ('Birne', '', category_dict['Obst']),
-        ('Gurke', '', category_dict['Gemüse']),
-        ('Tomate', '', category_dict['Gemüse']),
-        ('Blitzbringer', '', category_dict['Lieferservices']),
-        ('Windgeschwind', '', category_dict['Lieferservices']),
-        ('Super Lappen', '', category_dict['Reinigungsutensilien']),
-        ('Spüli', '', category_dict['Reinigungsutensilien']),
-        ('Klopapier', '', category_dict['Verbrauchsgüter']),
-        ('Zahnpasta', '', category_dict['Verbrauchsgüter']),
-        ('Trash Gera', '', category_dict['Veranstaltungen']),
-        ('Seven Club', '', category_dict['Veranstaltungen']),
-        ('Tierpark Gera', '', category_dict['Aktivitäten']),
-        ('Sky Motion Team', '', category_dict['Aktivitäten']),
+        ('Orangensaft', p_type_dict['Getränk'], category_dict['Säfte']),
+        ('Apfelsaft', p_type_dict['Getränk'], category_dict['Säfte']),
+        ('Wein', p_type_dict['Getränk'],
+         category_dict['Alkoholische Getränke']),
+        ('Bier', p_type_dict['Getränk'],
+         category_dict['Alkoholische Getränke']),
+        ('Banane', p_type_dict['Frischwaare'], category_dict['Obst']),
+        ('Birne', p_type_dict['Frischwaare'], category_dict['Obst']),
+        ('Gurke', p_type_dict['Frischwaare'], category_dict['Gemüse']),
+        ('Tomate', p_type_dict['Frischwaare'], category_dict['Gemüse']),
+        ('Blitzbringer', p_type_dict['Lieferservice'],
+         category_dict['Lieferservices']),
+        ('Windgeschwind', p_type_dict['Lieferservice'],
+         category_dict['Lieferservices']),
+        ('Super Lappen', p_type_dict['DefaultProduct'],
+         category_dict['Reinigungsutensilien']),
+        ('Spüli', p_type_dict['DefaultProduct'],
+         category_dict['Reinigungsutensilien']),
+        ('Klopapier', p_type_dict['DefaultProduct'],
+         category_dict['Verbrauchsgüter']),
+        ('Zahnpasta', p_type_dict['DefaultProduct'],
+         category_dict['Verbrauchsgüter']),
+        ('Trash Gera', category_dict['Veranstaltung'],
+         category_dict['Veranstaltungen']),
+        ('Seven Club', category_dict['Veranstaltung'],
+         category_dict['Veranstaltungen']),
+        ('Tierpark Gera',
+         category_dict['Veranstaltungen'], category_dict['Aktivitäten']),
+        ('Sky Motion Team',
+         category_dict['Veranstaltungen'], category_dict['Aktivitäten']),
     ]
 
     for product in products:
@@ -105,5 +148,7 @@ def create_products(category_dict):
 
 if __name__ == '__main__':
     category_dict = create_categories()
-    create_products(category_dict)
+    p_type_dict = create_p_types()
+
+    create_products(category_dict, p_type_dict)
     pass
