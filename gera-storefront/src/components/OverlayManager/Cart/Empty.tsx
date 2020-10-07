@@ -7,7 +7,7 @@ const Empty: React.FC<{ overlayHide(): void }> = ({ overlayHide }) => (
     <h4>Ihn Warenkorb ist leer</h4>
     <p>
       Sie haben noch nichts Ihrem Warenkorb hinzugefügt. Wir sind sicher das Sie
-      etwas finden.
+      noch etwas finden.
     </p>
     <div className="cart__empty__action">
       <Button secondary onClick={overlayHide}>
