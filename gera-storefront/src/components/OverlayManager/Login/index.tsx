@@ -11,7 +11,7 @@ import {
   Overlay,
   OverlayContextInterface,
   OverlayTheme,
-  OverlayType
+  OverlayType,
 } from "../..";
 import RegisterForm from "./RegisterForm";
 
@@ -57,13 +57,13 @@ class Login extends React.Component<
                 onClick={() => this.changeActiveTab("login")}
                 className={this.state.active === "login" ? "active-tab" : ""}
               >
-                Sign in to account
+                Einloggen
               </span>
               <span
                 onClick={() => this.changeActiveTab("register")}
                 className={this.state.active === "register" ? "active-tab" : ""}
               >
-                Register new account
+                Registrieren
               </span>
             </div>
             <div className="login__content">

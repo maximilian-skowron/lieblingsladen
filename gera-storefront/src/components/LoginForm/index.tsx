@@ -44,7 +44,7 @@ const LoginForm: React.FC<ILoginForm> = ({ hide }) => {
         />
         <div className="login-form__button">
           <Button type="submit" {...(loading && { disabled: true })}>
-            {loading ? "Loading" : "Sign in"}
+            {loading ? "Loading" : "Einloggen"}
           </Button>
         </div>
       </Form>
