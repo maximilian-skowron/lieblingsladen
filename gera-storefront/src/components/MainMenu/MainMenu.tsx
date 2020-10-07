@@ -47,7 +47,7 @@ const MainMenu: React.FC = () => {
 
   return (
     <OverlayContext.Consumer>
-      {overlayContext => (
+      {(overlayContext) => (
         <nav className="main-menu" id="header">
           <div className="main-menu__left">
             <TypedMainMenuQuery renderOnError displayLoader={false}>
@@ -83,7 +83,7 @@ const MainMenu: React.FC = () => {
                     <Media
                       query={{ minWidth: mediumScreen }}
                       render={() =>
-                        items.map(item => (
+                        items.map((item) => (
                           <li
                             data-cy="main-menu__item"
                             className="main-menu__item"
@@ -95,60 +95,62 @@ const MainMenu: React.FC = () => {
                       }
                     />
                     <Online>
-                <Media
-                  query={{ maxWidth: smallScreen }}
-                  render={() => (
-                    <>
-                      {user ? (
-                        <MenuDropdown
-                          suffixClass={'__rightdown'}
-                          head={
-                            <li className="main-menu__icon main-menu__user--active">
-                              <ReactSVG path={userImg} />
-                            </li>
-                          }
-                          content={
-                            <ul className="main-menu__dropdown">
-                              <li data-testid="my_account__link">
-                                <Link to={appPaths.accountUrl}>My Account</Link>
-                              </li>
-                              <li data-testid="order_history__link">
-                                <Link to={appPaths.orderHistoryUrl}>
-                                  Order history
-                                </Link>
-                              </li>
-                              <li data-testid="address_book__link">
-                                <Link to={appPaths.addressBookUrl}>
-                                  Address book
-                                </Link>
-                              </li>
+                      <Media
+                        query={{ maxWidth: smallScreen }}
+                        render={() => (
+                          <>
+                            {user ? (
+                              <MenuDropdown
+                                suffixClass={"__rightdown"}
+                                head={
+                                  <li className="main-menu__icon main-menu__user--active">
+                                    <ReactSVG path={userImg} />
+                                  </li>
+                                }
+                                content={
+                                  <ul className="main-menu__dropdown">
+                                    <li data-testid="my_account__link">
+                                      <Link to={appPaths.accountUrl}>
+                                        My Account
+                                      </Link>
+                                    </li>
+                                    <li data-testid="order_history__link">
+                                      <Link to={appPaths.orderHistoryUrl}>
+                                        Order history
+                                      </Link>
+                                    </li>
+                                    <li data-testid="address_book__link">
+                                      <Link to={appPaths.addressBookUrl}>
+                                        Address book
+                                      </Link>
+                                    </li>
+                                    <li
+                                      onClick={handleSignOut}
+                                      data-testid="logout-link"
+                                    >
+                                      Log Out
+                                    </li>
+                                  </ul>
+                                }
+                              />
+                            ) : (
                               <li
-                                onClick={handleSignOut}
-                                data-testid="logout-link"
+                                data-testid="login-btn"
+                                className="main-menu__icon"
+                                onClick={() =>
+                                  overlayContext.show(
+                                    OverlayType.login,
+                                    OverlayTheme.left
+                                  )
+                                }
                               >
-                                Log Out
+                                <ReactSVG path={userImg} />
                               </li>
-                            </ul>
-                          }
-                        />
-                      ) : (
-                        <li
-                          data-testid="login-btn"
-                          className="main-menu__icon"
-                          onClick={() =>
-                            overlayContext.show(
-                              OverlayType.login,
-                              OverlayTheme.left
-                            )
-                          }
-                        >
-                          <ReactSVG path={userImg} />
-                        </li>
-                      )}
-                    </>
-                  )}
-                />
-              </Online>
+                            )}
+                          </>
+                        )}
+                      />
+                    </Online>
                   </ul>
                 );
               }}
@@ -157,7 +159,7 @@ const MainMenu: React.FC = () => {
 
           <div className="main-menu__center">
             <Link to={appPaths.baseUrl}>
-              <img src={logoImg} alt="loading..."/>
+              <img src={logoImg} alt="loading..." />
               <ReactSVG path={logoImg} />
             </Link>
           </div>
@@ -247,7 +249,7 @@ const MainMenu: React.FC = () => {
               >
                 <Media
                   query={{ minWidth: mediumScreen }}
-                  render={() => <span>Search</span>}
+                  render={() => <span>Suche</span>}
                 />
                 <ReactSVG path={searchImg} />
               </li>
