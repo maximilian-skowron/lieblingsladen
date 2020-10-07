@@ -86,12 +86,12 @@ class Search extends React.Component<SearchProps, SearchState> {
           className={classNames("search", {
             "search--has-results": this.hasSearchPhrase,
           })}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
           onSubmit={this.handleSubmit}
         >
           <div className="search__input">
             <DebouncedTextField
-              onChange={evt => this.setState({ search: evt.target.value })}
+              onChange={(evt) => this.setState({ search: evt.target.value })}
               value={this.state.search}
               iconLeft={
                 <ReactSVG path={closeImg} onClick={this.props.overlay.hide} />
@@ -109,7 +109,7 @@ class Search extends React.Component<SearchProps, SearchState> {
             })}
           >
             <NetworkStatus>
-              {isOnline => {
+              {(isOnline) => {
                 if (this.hasSearchPhrase) {
                   return (
                     <TypedSearchResults
@@ -123,7 +123,7 @@ class Search extends React.Component<SearchProps, SearchState> {
                           return (
                             <>
                               <ul>
-                                {data.products.edges.map(product => (
+                                {data.products.edges.map((product) => (
                                   <ProductItem
                                     {...product}
                                     key={product.node.id}
@@ -138,7 +138,7 @@ class Search extends React.Component<SearchProps, SearchState> {
                                     btnRef={this.submitBtnRef}
                                     type="submit"
                                   >
-                                    Show all results
+                                    Alle Ergebnisse anzeigen
                                   </Button>
                                 )}
                               </div>
