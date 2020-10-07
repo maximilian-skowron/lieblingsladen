@@ -53,7 +53,7 @@ const Cart: React.FC<{ overlay: OverlayContextInterface }> = ({ overlay }) => {
           <div className="overlay__header">
             <ReactSVG path={cartImg} className="overlay__header__cart-icon" />
             <div className="overlay__header-text">
-              My bag,{" "}
+              Mein Warenkorb,{" "}
               <span className="overlay__header-text-items">
                 {items?.reduce(
                   (prevVal, currVal) => prevVal + currVal.quantity,
