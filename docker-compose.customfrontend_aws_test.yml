@@ -37,12 +37,12 @@ services:
       args:
         API_URI: http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com:8000/graphql/
     ports:
-      - 3000:3000
+      - 3001:3000
     restart: unless-stopped
     volumes:
       - ./gera-storefront/:/app:cached
       - /app/node_modules/
-    command: npm start -- --host ec2-18-185-40-145.eu-central-1.compute.amazonaws.com
+    command: npm start -- --host 0.0.0.0
 
   dashboard:
     build:
@@ -51,12 +51,12 @@ services:
       args:
         API_URI: http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com:8000/graphql/
     ports:
-      - 9000:9000
+      - 9001:9000
     restart: unless-stopped
     volumes:
       - ./saleor-dashboard/:/app:cached
       - /app/node_modules/
-    command: npm start -- --host ec2-18-185-40-145.eu-central-1.compute.amazonaws.com
+    command: npm start -- --host 0.0.0.0
 
   db:
     image: library/postgres:11.1-alpine
