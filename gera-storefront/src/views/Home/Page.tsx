@@ -73,7 +73,7 @@ const Page: React.FC<{
       {categoriesExist() && (
         <div className="home-page__categories">
           <div className="container">
-            <h3>Produktkategorien/h3>
+            <h3>Produktkategorien</h3>
             <div className="home-page__categories__list">
               {categories.edges.map(({ node: category }) => (
                 <div key={category.id}>
