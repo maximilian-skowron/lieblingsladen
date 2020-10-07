@@ -4,14 +4,14 @@ import { Button } from "../..";
 
 const Empty: React.FC<{ overlayHide(): void }> = ({ overlayHide }) => (
   <div className="cart__empty">
-    <h4>Your bag is empty</h4>
+    <h4>Ihn Warenkorb ist leer</h4>
     <p>
-      You haven’t added anything to your bag. We’re sure you’ll find something
-      in our store
+      Sie haben noch nichts Ihrem Warenkorb hinzugefügt. Wir sind sicher das Sie
+      etwas finden.
     </p>
     <div className="cart__empty__action">
       <Button secondary onClick={overlayHide}>
-        Continue Shopping
+        Weiter einkaufen
       </Button>
     </div>
   </div>
