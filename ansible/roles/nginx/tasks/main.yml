@@ -12,7 +12,7 @@
     state: absent
 
 - name: nginx config
-  copy:
+  template:
     src: reverse_proxy.conf
     dest: /etc/nginx/sites-available/reverse_proxy.conf
     mode: "755"
@@ -26,8 +26,7 @@
     mode: "755"
     state: link
 
-- name: nginx autostart and running
+- name: nginx autostart
   systemd:
     name: nginx
-    state: started
     enabled: yes
