@@ -10,8 +10,7 @@ def execute_querry(query: str):
     headers = {"Authorization": "Bearer {0}".format(GRAPHQL_BEAR_TOKEN)}
 
     r = requests.post(GRAPHQL_URL, json={'query': query}, headers=headers)
-    print(r.json())
-    return r
+    return r.json()
 
 
 def get_query_create_category(name: str, parrent_id: str = None):
@@ -48,6 +47,7 @@ def get_query_create_product_type(name: str):
     query = """mutation exampleProductType {
             productTypeCreate (input: {name:"%s", }){
                     productType{
+                        name
                         id
                     }
             }
@@ -90,16 +90,16 @@ def create_categories():
         root_category_name, sub_category_name_list = category
 
         r_json = execute_querry(
-            get_query_create_category(root_category_name)).json()
+            get_query_create_category(root_category_name))
 
         p_id = r_json['data']['categoryCreate']['category']['id']
 
         for sub_category in sub_category_name_list:
             r_json = execute_querry(get_query_create_category(
                 sub_category, parrent_id=p_id))
-
+            print(r_json)
             name = r_json['data']['categoryCreate']['category']['name']
-            s_id = r_json['data']['categoryCreate']['category']['name']
+            s_id = r_json['data']['categoryCreate']['category']['id']
 
             category_id_dict[name] = s_id
 
@@ -130,14 +130,14 @@ def create_products(category_dict: dict, p_type_dict: dict):
          category_dict['Verbrauchsgüter']),
         ('Zahnpasta', p_type_dict['DefaultProduct'],
          category_dict['Verbrauchsgüter']),
-        ('Trash Gera', category_dict['Veranstaltung'],
+        ('Trash Gera', p_type_dict['Veranstaltung'],
          category_dict['Veranstaltungen']),
-        ('Seven Club', category_dict['Veranstaltung'],
+        ('Seven Club', p_type_dict['Veranstaltung'],
          category_dict['Veranstaltungen']),
         ('Tierpark Gera',
-         category_dict['Veranstaltungen'], category_dict['Aktivitäten']),
+         p_type_dict['Veranstaltung'], category_dict['Aktivitäten']),
         ('Sky Motion Team',
-         category_dict['Veranstaltungen'], category_dict['Aktivitäten']),
+         p_type_dict['Veranstaltung'], category_dict['Aktivitäten']),
     ]
 
     for product in products:
