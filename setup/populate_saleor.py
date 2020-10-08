@@ -1,15 +1,35 @@
 import requests
 import os
 import random
+import os
+from aiogqlc import GraphQLClient
+from urllib.request import urlretrieve
+import asyncio
+import itertools
+import cgi
+import tempfile
+
 
 GRAPHQL_URL = 'http://localhost:8000/graphql/'
 GRAPHQL_BEAR_TOKEN = os.environ.get('GRAPHQL_BEAR_TOKEN')
+
+
+async def execute_querry_upload_file(query: str, file_path):
+    variables = {
+        'file': open(file_path, 'rb'),
+    }
+    headers = {"Authorization": "Bearer {0}".format(GRAPHQL_BEAR_TOKEN)}
+
+    client = GraphQLClient(GRAPHQL_URL, headers=headers)
+    r = await client.execute(query, variables=variables)
+    print(await r.json())
 
 
 def execute_querry(query: str):
     headers = {"Authorization": "Bearer {0}".format(GRAPHQL_BEAR_TOKEN)}
 
     r = requests.post(GRAPHQL_URL, json={'query': query}, headers=headers)
+    print(r.json())
     return r.json()
 
 
@@ -33,9 +53,10 @@ def get_query_create_example_product(name: str, product_type_id: str, category_i
     lorem_ipsum = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
 
     query = """mutation exampleProduct {
-            productCreate (input: {name:"%s", productType:"%s", category:"%s", basePrice:"%s", description:"%s", isPublished:true}){
+            productCreate (input: {name:"%s", productType:"%s", category:"%s", basePrice:"%.2f", description:"%s", isPublished:true}){
                 product {
                 name
+                id
                 }
             }
         }""" % (name, product_type_id, category_id, random.uniform(0.5, 9.9), lorem_ipsum)
@@ -53,6 +74,16 @@ def get_query_create_product_type(name: str):
             }
         }""" % (name)
 
+    return query
+
+
+def get_query_product_img_upload(product_id: str, image_name: str):
+    query = """mutation exampleProductImage {
+        productImageCreate (input: {product: "%s", image: "%s"}){
+            productErrors{message}
+            image{id}
+        }
+    }""" % (product_id, image_name)
     return query
 
 
@@ -140,15 +171,67 @@ def create_products(category_dict: dict, p_type_dict: dict):
          p_type_dict['Veranstaltung'], category_dict['Aktivitäten']),
     ]
 
+    product_id_dict = {}
+
     for product in products:
         name, product_type_id, category_id = product
-        execute_querry(get_query_create_example_product(
+        # print(get_query_create_example_product(
+        #   name, product_type_id, category_id))
+        r_json = execute_querry(get_query_create_example_product(
             name, product_type_id, category_id))
+
+        name = r_json['data']['productCreate']['product']['name']
+        p_id = r_json['data']['productCreate']['product']['id']
+
+        product_id_dict[name] = p_id
+    return product_id_dict
+
+
+def createProductImages(product_id_dict: dict):
+    images = [
+        ('248747', product_id_dict['Windgeschwind']),
+        ('1337824', product_id_dict['Orangensaft']),
+        ('616833', product_id_dict['Apfelsaft']),
+        ('3596690', product_id_dict['Wein']),
+        ('1672304', product_id_dict['Bier']),
+        ('61127', product_id_dict['Banane']),
+        ('568471', product_id_dict['Birne']),
+        ('128420', product_id_dict['Gurke']),
+        ('5617', product_id_dict['Tomate']),
+        ('1114690', product_id_dict['Blitzbringer']),
+        ('4239035', product_id_dict['Super Lappen']),
+        ('4239117', product_id_dict['Spüli']),
+        ('3958212', product_id_dict['Klopapier']),
+        ('298611', product_id_dict['Zahnpasta']),
+        ('2111015', product_id_dict['Trash Gera']),
+        ('2747446', product_id_dict['Seven Club']),
+        ('56733', product_id_dict['Tierpark Gera']),
+        ('3876395', product_id_dict['Sky Motion Team']),
+    ]
+
+    args = []
+    for image_req in images:
+        image_id, product_id = image_req
+        r = requests.get(
+            'http://www.pexels.com/photo/{0}/download/'.format(image_id))
+
+        _, params = cgi.parse_header(r.headers['Content-Disposition'])
+        open(params['filename'], 'wb').write(r.content)
+
+        query = get_query_product_img_upload(product_id, params['filename'])
+        print(query)
+        args.append((query, params['filename']))
+
+    tasks = itertools.starmap(
+        execute_querry_upload_file, args)
+    asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
 
 
 if __name__ == '__main__':
     category_dict = create_categories()
     p_type_dict = create_p_types()
 
-    create_products(category_dict, p_type_dict)
+    p_id_dict = create_products(category_dict, p_type_dict)
+
+    createProductImages(p_id_dict)
     pass
