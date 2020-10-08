@@ -78,12 +78,12 @@ def get_query_create_product_type(name: str):
 
 
 def get_query_product_img_upload(product_id: str, image_name: str):
-    query = """mutation exampleProductImage {
-        productImageCreate (input: {product: "%s", image: "%s"}){
+    query = """mutation exampleProductImage($file: Upload!) {
+        productImageCreate (input: {product: "%s", image: $file}){
             productErrors{message}
             image{id}
         }
-    }""" % (product_id, image_name)
+    }""" % (product_id)
     return query
 
 
