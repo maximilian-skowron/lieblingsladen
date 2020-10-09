@@ -9,16 +9,26 @@ import itertools
 import cgi
 import tempfile
 import logging
+import io
 
-logging.basicConfig(format='[%(filename)s][%(levelname)s]: %(message)s')
+logging.basicConfig(
+    format='[%(filename)s][%(levelname)s]: %(message)s', level=logging.INFO)
 
 GRAPHQL_URL = 'http://localhost:8000/graphql/'
 GRAPHQL_BEAR_TOKEN = os.environ.get('GRAPHQL_BEAR_TOKEN')
 
 
-async def execute_querry_upload_file(query: str, file_path):
+async def execute_querry_upload_file(query: str, pexels_id):
+    logging.info('Download {0} from pexels'.format(pexels_id))
+    r = requests.get(
+        'http://www.pexels.com/photo/{0}/download/'.format(pexels_id))
+    _, params = cgi.parse_header(r.headers['Content-Disposition'])
+    # tempfile and BytesIO dos not work for some reason
+    file = open(params['filename'], 'wb+')
+    file.write(r.content)
+
     variables = {
-        'file': open(file_path, 'rb'),
+        'file': file,
     }
     headers = {"Authorization": "Bearer {0}".format(GRAPHQL_BEAR_TOKEN)}
 
@@ -26,12 +36,15 @@ async def execute_querry_upload_file(query: str, file_path):
     r = await client.execute(query, variables=variables)
     print(await r.json())
 
+    file.close()
+    logging.info('Delete {0} from drive'.format(params['filename']))
+    os.remove(params['filename'])
+
 
 def execute_querry(query: str):
     headers = {"Authorization": "Bearer {0}".format(GRAPHQL_BEAR_TOKEN)}
 
     r = requests.post(GRAPHQL_URL, json={'query': query}, headers=headers)
-    print(r.json())
     return r.json()
 
 
@@ -47,6 +60,22 @@ def get_query_create_category(name: str, parrent_id: str = None):
                 }
             }
         }""" % (name, '' if parrent_id is None else parrent_part)
+
+    return query
+
+
+def get_query_update_category_picture(id: str):
+    query = """mutation updateCategoryPicture($file: Upload!) {
+                categoryUpdate (id: "%s", input: { backgroundImage: $file}){
+                    productErrors{
+                        message
+                        field
+                    }
+                    category{
+                        id
+                    }
+                }
+        }""" % (id)
 
     return query
 
@@ -79,7 +108,7 @@ def get_query_create_product_type(name: str):
     return query
 
 
-def get_query_product_img_upload(product_id: str, image_name: str):
+def get_query_product_img_upload(product_id: str):
     query = """mutation exampleProductImage($file: Upload!) {
         productImageCreate (input: {product: "%s", image: $file}){
             productErrors{message}
@@ -114,17 +143,18 @@ def create_p_types():
 
 def create_categories():
     categories = [
-        ('Verpfelgung', ['Säfte', 'Alkoholische Getränke',
-                         'Obst', 'Gemüse', 'Lieferservices']),
+        ('Verpfelgung', '3025236', ['Säfte', 'Alkoholische Getränke',
+                                    'Obst', 'Gemüse', 'Lieferservices']),
 
-        ('Haushalt', ['Reinigungsutensilien', 'Verbrauchsgüter']),
-        ('Freizeit', ['Veranstaltungen', 'Aktivitäten']),
+        ('Haushalt', '584399', ['Reinigungsutensilien', 'Verbrauchsgüter']),
+        ('Freizeit', '6332', ['Veranstaltungen', 'Aktivitäten']),
     ]
 
     category_id_dict = {}
+    upload_args = []
 
     for category in categories:
-        root_category_name, sub_category_name_list = category
+        root_category_name, root_img_id, sub_category_name_list = category
 
         r_json = execute_querry(
             get_query_create_category(root_category_name))
@@ -132,6 +162,9 @@ def create_categories():
         p_id = r_json['data']['categoryCreate']['category']['id']
         logging.info('Category {0} with id {1} created'.format(
             root_category_name, p_id))
+
+        query = get_query_update_category_picture(p_id)
+        upload_args.append((query, root_img_id))
 
         for sub_category in sub_category_name_list:
             r_json = execute_querry(get_query_create_category(
@@ -144,6 +177,9 @@ def create_categories():
                 'Subcategory {0} with id {1} created'.format(name, s_id))
 
             category_id_dict[name] = s_id
+
+    tasks = itertools.starmap(execute_querry_upload_file, upload_args)
+    asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
 
     return category_id_dict
 
@@ -225,15 +261,9 @@ def createProductImages(product_id_dict: dict):
     args = []
     for image_req in images:
         image_id, product_id = image_req
-        r = requests.get(
-            'http://www.pexels.com/photo/{0}/download/'.format(image_id))
-
-        _, params = cgi.parse_header(r.headers['Content-Disposition'])
-        open(params['filename'], 'wb').write(r.content)
-
-        query = get_query_product_img_upload(product_id, params['filename'])
-        print(query)
-        args.append((query, params['filename']))
+        query = get_query_product_img_upload(product_id)
+        # print(query)
+        args.append((query, image_id))
 
     tasks = itertools.starmap(
         execute_querry_upload_file, args)
