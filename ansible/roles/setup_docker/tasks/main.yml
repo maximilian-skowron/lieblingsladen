@@ -14,4 +14,4 @@
     mode: "755"
 
 - name: Build docker containers
-  shell: "d"ocker-compose -f {{ github_clone_path }}/lieblingsladen/docker-compose.customfrontend.cloud.yml build"
+  shell: "docker-compose -f {{ github_clone_path }}/lieblingsladen/docker-compose.customfrontend.cloud.yml build"
