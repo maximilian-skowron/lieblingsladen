@@ -7,9 +7,10 @@ from urllib.request import urlretrieve
 import asyncio
 import itertools
 import cgi
+import io
 import tempfile
 import logging
-import io
+
 
 logging.basicConfig(
     format='[%(filename)s][%(levelname)s]: %(message)s', level=logging.INFO)
@@ -26,6 +27,7 @@ async def execute_querry_upload_file(query: str, pexels_id):
     # tempfile and BytesIO dos not work for some reason
     file = open(params['filename'], 'wb+')
     file.write(r.content)
+    file.seek(0)  # set read head to statr
 
     variables = {
         'file': file,
@@ -33,8 +35,9 @@ async def execute_querry_upload_file(query: str, pexels_id):
     headers = {"Authorization": "Bearer {0}".format(GRAPHQL_BEAR_TOKEN)}
 
     client = GraphQLClient(GRAPHQL_URL, headers=headers)
+    logging.info('Upload Image {0} to saleor'.format(params['filename']))
     r = await client.execute(query, variables=variables)
-    print(await r.json())
+    # print(await r.json())
 
     file.close()
     logging.info('Delete {0} from drive'.format(params['filename']))
@@ -169,7 +172,7 @@ def create_categories():
         for sub_category in sub_category_name_list:
             r_json = execute_querry(get_query_create_category(
                 sub_category, parrent_id=p_id))
-            print(r_json)
+            # print(r_json)
             name = r_json['data']['categoryCreate']['category']['name']
             s_id = r_json['data']['categoryCreate']['category']['id']
 
