@@ -6,7 +6,7 @@
 
   vars:
     docker_group_users: ubuntu
-    access_control_allow_origin: http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com/
+    cloud_server_domain: http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com/
 
   roles:
     - docker
