@@ -8,7 +8,9 @@ import asyncio
 import itertools
 import cgi
 import tempfile
+import logging
 
+logging.basicConfig(format='[%(filename)s][%(levelname)s]: %(message)s')
 
 GRAPHQL_URL = 'http://localhost:8000/graphql/'
 GRAPHQL_BEAR_TOKEN = os.environ.get('GRAPHQL_BEAR_TOKEN')
@@ -101,6 +103,10 @@ def create_p_types():
     for type_name in types:
         r_json = execute_querry(get_query_create_product_type(type_name))
         t_id = r_json['data']['productTypeCreate']['productType']['id']
+
+        logging.info('Product Type {0} with id {1} created'.format(
+            type_name, t_id))
+
         id_dict[type_name] = t_id
 
     return id_dict
@@ -124,6 +130,8 @@ def create_categories():
             get_query_create_category(root_category_name))
 
         p_id = r_json['data']['categoryCreate']['category']['id']
+        logging.info('Category {0} with id {1} created'.format(
+            root_category_name, p_id))
 
         for sub_category in sub_category_name_list:
             r_json = execute_querry(get_query_create_category(
@@ -131,6 +139,9 @@ def create_categories():
             print(r_json)
             name = r_json['data']['categoryCreate']['category']['name']
             s_id = r_json['data']['categoryCreate']['category']['id']
+
+            logging.info(
+                'Subcategory {0} with id {1} created'.format(name, s_id))
 
             category_id_dict[name] = s_id
 
@@ -182,6 +193,8 @@ def create_products(category_dict: dict, p_type_dict: dict):
 
         name = r_json['data']['productCreate']['product']['name']
         p_id = r_json['data']['productCreate']['product']['id']
+
+        logging.info('Product {0} with id {1} created'.format(name, p_id))
 
         product_id_dict[name] = p_id
     return product_id_dict
