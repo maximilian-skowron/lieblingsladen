@@ -1,0 +1,17 @@
+---
+# tasks file for setup_docker
+- name: Clone lieblingsladen git
+  git:
+    repo: "https://github.com/maximilian-skowron/lieblingsladen.git"
+    dest: "{{ github_clone_path }}/lieblingsladen"
+    recursive: yes
+    update: yes
+
+- name: Update docker-compose file
+  template:
+    src: docker-compose.customfrontend.cloud.yml
+    dest: "{{ github_clone_path }}/lieblingsladen/docker-compose.customfrontend.cloud.yml"
+    mode: "755"
+
+- name: Build docker containers
+  shell: "d"ocker-compose -f {{ github_clone_path }}/lieblingsladen/docker-compose.customfrontend.cloud.yml build"

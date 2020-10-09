@@ -26,16 +26,16 @@ services:
     env_file: common.env
     environment:
       - JAEGER_AGENT_HOST=jaeger
-      - STOREFRONT_URL=http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com
-      - DASHBOARD_URL=http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com/dashboard
-      - ALLOWED_HOSTS=localhost,127.0.0.1,ec2-18-185-40-145.eu-central-1.compute.amazonaws.com
+      - STOREFRONT_URL={{ cloud_server_protocol }}{{ cloud_server_domain }}
+      - DASHBOARD_URL={{ cloud_server_protocol }}{{ cloud_server_domain }}/dashboard
+      - ALLOWED_HOSTS=localhost,127.0.0.1,{{ cloud_server_domain }}
 
   storefront:
     build:
       context: ./gera-storefront
       dockerfile: ./Dockerfile.dev
       args:
-        API_URI: http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com:8000/graphql/
+        API_URI: {{ cloud_server_protocol }}{{ cloud_server_domain }}:8000/graphql/
     ports:
       - 3001:3000
     restart: unless-stopped
@@ -49,7 +49,7 @@ services:
       context: ./saleor-dashboard
       dockerfile: ./Dockerfile.dev
       args:
-        API_URI: http://ec2-18-185-40-145.eu-central-1.compute.amazonaws.com:8000/graphql/
+        API_URI: {{ cloud_server_protocol }}{{ cloud_server_domain }}:8000/graphql/
     ports:
       - 9001:9000
     restart: unless-stopped
