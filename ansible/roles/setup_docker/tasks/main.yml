@@ -11,7 +11,7 @@
   template:
     src: docker-compose.customfrontend.cloud.yml
     dest: "{{ github_clone_path }}/lieblingsladen/docker-compose.customfrontend.cloud.yml"
-    mode: "755"
+    mode: "644"
 
 - name: Build docker containers
   shell: "docker-compose -f {{ github_clone_path }}/lieblingsladen/docker-compose.customfrontend.cloud.yml build"
