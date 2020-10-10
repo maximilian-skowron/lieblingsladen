@@ -98,7 +98,7 @@ class Search extends React.Component<SearchProps, SearchState> {
               }
               iconRight={<ReactSVG path={searchImg} />}
               autoFocus={true}
-              placeholder="Search"
+              placeholder="Suche"
               onBlur={this.handleInputBlur}
             />
           </div>
