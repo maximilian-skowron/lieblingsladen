@@ -71,7 +71,7 @@ const Page: React.FC<{
       </div>
       <ProductsFeatured />
       {categoriesExist() && (
-        <div className="home-page__categories">
+        <div className="home-page__categories" style={{padding-top:'1rem'}}>
           <div className="container">
             <h3>Produkte Geras</h3>
             <div className="home-page__categories__list">
