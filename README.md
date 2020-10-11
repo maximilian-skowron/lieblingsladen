@@ -59,9 +59,9 @@ Steps:
 5. navigate to `ansible`
 6. update `access_control_allow_origin` in `setup_server.yml` to match your domain
 7. run `ansible-playbook setup_server.yml`
-8. do setp 2 of local setup
+8. do setp 2 of local setup on remote system
 
-TODO: update ansible roles to change domain name in files.
+Docker-compose file: `docker-compose.customfrontend.cloud.yml`
 
 ## How to run it?
 
