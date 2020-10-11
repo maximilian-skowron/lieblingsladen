@@ -292,7 +292,6 @@ def create_warehouse():
     }"""
 
     r_json = execute_querry(query)
-    print(r_json)
 
     return r_json['data']['createWarehouse']['warehouse']['id']
 
@@ -305,5 +304,4 @@ if __name__ == '__main__':
 
     p_id_dict = create_products(category_dict, p_type_dict, warehouse_id)
 
-    # createProductImages(p_id_dict)
-    pass
+    createProductImages(p_id_dict)
