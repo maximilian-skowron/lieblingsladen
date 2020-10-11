@@ -45,6 +45,8 @@ async def execute_querry_upload_file(query: str, pexels_id):
 
 
 def execute_querry(query: str):
+    # discovered GraphQLClient to late -> not time to rewrite code
+
     headers = {"Authorization": "Bearer {0}".format(GRAPHQL_BEAR_TOKEN)}
 
     r = requests.post(GRAPHQL_URL, json={'query': query}, headers=headers)
@@ -83,17 +85,19 @@ def get_query_update_category_picture(id: str):
     return query
 
 
-def get_query_create_example_product(name: str, product_type_id: str, category_id: str):
+def get_query_create_example_product(name: str, product_type_id: str, category_id: str, warehouse_id: str):
     lorem_ipsum = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. "
+    json_data = '{\\"blocks\\": [{\\"key\\": \\"\\", \\"data\\": {}, \\"text\\": \\"%s\\", \\"type\\": \\"unstyled\\", \\"depth\\": 0, \\"entityRanges\\": [], \\"inlineStyleRanges\\": []}], \\"entityMap\\": {}}' % (
+        lorem_ipsum)
 
     query = """mutation exampleProduct {
-            productCreate (input: {name:"%s", productType:"%s", category:"%s", basePrice:"%.2f", description:"%s", isPublished:true}){
+            productCreate (input: {name:"%s", productType:"%s", category:"%s", basePrice:"%.2f", description:"%s", descriptionJson:"%s", isPublished:true, stocks:{ warehouse: "%s" , quantity:10 }}){
                 product {
                 name
                 id
                 }
             }
-        }""" % (name, product_type_id, category_id, random.uniform(0.5, 9.9), lorem_ipsum)
+        }""" % (name, product_type_id, category_id, random.uniform(0.5, 9.9), lorem_ipsum, json_data, warehouse_id)
 
     return query
 
@@ -187,7 +191,7 @@ def create_categories():
     return category_id_dict
 
 
-def create_products(category_dict: dict, p_type_dict: dict):
+def create_products(category_dict: dict, p_type_dict: dict, warehouse_id: str):
     products = [
         ('Orangensaft', p_type_dict['Getränk'], category_dict['Säfte']),
         ('Apfelsaft', p_type_dict['Getränk'], category_dict['Säfte']),
@@ -228,7 +232,8 @@ def create_products(category_dict: dict, p_type_dict: dict):
         # print(get_query_create_example_product(
         #   name, product_type_id, category_id))
         r_json = execute_querry(get_query_create_example_product(
-            name, product_type_id, category_id))
+            name, product_type_id, category_id, warehouse_id))
+        print(r_json)
 
         name = r_json['data']['productCreate']['product']['name']
         p_id = r_json['data']['productCreate']['product']['id']
@@ -273,11 +278,32 @@ def createProductImages(product_id_dict: dict):
     asyncio.get_event_loop().run_until_complete(asyncio.gather(*tasks))
 
 
+def create_warehouse():
+    query = """mutation warehouse{
+        createWarehouse(input: {companyName: "lieblingsladen gmbh", name:"Arcarden", email:"lieblingsladen@gera.de" address: {streetAddress1:"blumenstraße", city:"gera", country:DE, postalCode: "07545"}}){
+            warehouse{
+                id
+            }
+            warehouseErrors{
+                field
+                message
+            }
+        }
+    }"""
+
+    r_json = execute_querry(query)
+    print(r_json)
+
+    return r_json['data']['createWarehouse']['warehouse']['id']
+
+
 if __name__ == '__main__':
+    warehouse_id = create_warehouse()
+
     category_dict = create_categories()
     p_type_dict = create_p_types()
 
-    p_id_dict = create_products(category_dict, p_type_dict)
+    p_id_dict = create_products(category_dict, p_type_dict, warehouse_id)
 
-    createProductImages(p_id_dict)
+    # createProductImages(p_id_dict)
     pass
