@@ -71,10 +71,11 @@ Difference:
 
 - Run `docker-compose.customfrontend.yml` instad of `docker-compose.yml` with docker compose. (like in local setup)
 
-### Example Populate
+### Graphql Demo Populate
 
 1. edit `GRAPHQL_URL` to match your env.
 2. export env. var `GRAPHQL_BEAR_TOKEN` with your bear token ([How to create token with api?](https://docs.saleor.io/docs/developer/extending/apps)/ [Dashboard](https://docs.saleor.io/docs/dashboard/configuration/service-accounts))
+3. run `python3 populate_saleor.py`
 
 ## Where is the application running locally?
 
