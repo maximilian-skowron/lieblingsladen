@@ -38,7 +38,7 @@ All python modules are included in `/setup/pipfile` for a virtual env.
 
 ### Local setup
 
-1. cd into repo.
+1. navigate into repo.
 2. Follow [official dokumentation](https://docs.saleor.io/docs/developer/installation/). Instead of using the default `docker-compose.yml` use d`ocker-compose.customfrontend.yml`.
 
 Example:
@@ -73,9 +73,10 @@ Difference:
 
 ### Graphql Demo Populate
 
-1. edit `GRAPHQL_URL` to match your env.
-2. export env. var `GRAPHQL_BEAR_TOKEN` with your bear token ([How to create token with api?](https://docs.saleor.io/docs/developer/extending/apps)/ [Dashboard](https://docs.saleor.io/docs/dashboard/configuration/service-accounts))
-3. run `python3 populate_saleor.py`
+1. navigate to `setup` folder
+2. edit `GRAPHQL_URL` in `populate_saleor.py` to match your env.
+3. export env. var `GRAPHQL_BEAR_TOKEN` with your bear token ([How to create token with api?](https://docs.saleor.io/docs/developer/extending/apps)/ [Dashboard](https://docs.saleor.io/docs/dashboard/configuration/service-accounts))
+4. run `python3 populate_saleor.py`
 
 ## Where is the application running locally?
 
